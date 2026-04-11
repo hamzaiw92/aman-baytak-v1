@@ -57,11 +57,14 @@
         }
         .btn:active { transform: scale(0.98); }
         
-        /* تحسين تنسيق زر الواتساب */
         .btn-wa { 
             background: var(--wa) !important; 
             color: white !important;
             font-size: 14px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-delete { background: #ff5252; margin-top: 10px; font-size: 13px; padding: 10px; }
@@ -236,9 +239,19 @@
 
             const list = document.getElementById('jobs-list');
             list.innerHTML = "";
+            const now = new Date();
+
             snapshot.forEach((child) => {
                 const id = child.key;
                 const j = child.val();
+                
+                // حساب الوقت المنقضي بالساعات
+                const hoursPast = (now - new Date(j.createdAt)) / (1000 * 60 * 60);
+
+                // ✅ منطق العرض: يخفيه من المنصة إذا اكتمل أو مر يوم كامل على استلامه
+                if (j.status === "مكتمل") return;
+                if (j.status === "قيد التنفيذ" && hoursPast > 24) return;
+
                 const isAvail = j.status === "متاح";
                 list.innerHTML = `
                     <div class="job-card" style="border-right-color: ${isAvail ? '#00c853' : '#ff9800'}">
@@ -283,8 +296,17 @@
         }
     }
 
-    window.finishJob = async function(id) { if(confirm("إكمال المهمة؟")) await remove(ref(db, `${jobsPath}/${id}`)); }
-    window.deleteJob = async function(id) { if(confirm("حذف الطلب؟")) await remove(ref(db, `${jobsPath}/${id}`)); }
+    // ✅ تحديث: الحالة تصبح "مكتمل" ليبقى في فايربيس للأبد ويختفي من المنصة
+    window.finishJob = async function(id) { 
+        if(confirm("نقل الطلب للأرشيف الدائم (سيبقى في فايربيس)؟")) {
+            await update(ref(db, `${jobsPath}/${id}`), { 
+                status: "مكتمل",
+                completedAt: new Date().toISOString()
+            });
+        }
+    }
+
+    window.deleteJob = async function(id) { if(confirm("حذف الطلب نهائياً من كل مكان؟")) await remove(ref(db, `${jobsPath}/${id}`)); }
 </script>
 </body>
 </html>
