@@ -8,12 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --p: #00c853; --s: #1a237e; --w: #ffffff; --wa: #25D366; }
+        :root { --p: #00c853; --s: #1a237e; --w: #ffffff; --wa: #25D366; --gray: #607d8b; }
         body {
             font-family: 'Tajawal', sans-serif; margin: 0;
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             min-height: 100vh; color: #333; overflow-x: hidden;
         }
+
+        /* شاشة الترحيب (Logo Splash) - تم تحديثها */
+        #splash {
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(255,255,255,0.98); z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: 0.8s;
+        }
+        #splash img { width: 180px; border-radius: 20px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
         
         nav {
             background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px);
@@ -30,56 +39,51 @@
         .page.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; } }
 
-        .card { background: rgba(255, 255, 255, 0.96); padding: 25px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; }
-        
-        .rules-box {
-            background: #fff8e1; color: #f57f17; padding: 15px; border-radius: 20px;
-            font-size: 13px; margin-bottom: 20px; border: 1px solid #ffecb3;
-        }
-
-        .input-group { margin-bottom: 18px; position: relative; }
+        .card { background: rgba(255, 255, 255, 0.96); padding: 25px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); margin-bottom: 20px; }
+        .input-group { margin-bottom: 18px; position: relative; margin-right: 0px;}
         .input-group i { position: absolute; right: 15px; top: 18px; color: var(--p); font-size: 18px; }
-        input, textarea {
+        input, textarea, select {
             width: 100%; padding: 16px 50px 16px 15px; border: 2px solid #eee;
             border-radius: 18px; box-sizing: border-box; font-family: 'Tajawal'; font-size: 16px;
         }
 
-        .upload-area {
-            border: 3px dashed #ddd; border-radius: 20px; padding: 20px;
-            text-align: center; cursor: pointer; background: #fafafa; margin-bottom: 20px;
-        }
-        
         .btn {
             background: var(--p); color: white; border: none; width: 100%; padding: 15px;
             border-radius: 20px; font-size: 1rem; font-weight: 800; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
             text-decoration: none;
         }
-        .btn:active { transform: scale(0.98); }
+        .btn-wa { background: var(--wa) !important; font-size: 14px; text-decoration: none; }
         
-        .btn-wa { 
-            background: var(--wa) !important; 
-            color: white !important;
-            font-size: 14px;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+        .job-card { background: white; border-right: 8px solid var(--p); padding: 20px; margin-bottom: 20px; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .job-img { width: 100%; border-radius: 15px; margin-bottom: 15px; object-fit: cover; max-height: 200px; cursor: pointer; transition: 0.3s;}
+        .job-img:hover { transform: scale(1.02); }
+        .time-tag { background: #f0f0f0; padding: 4px 10px; border-radius: 10px; font-size: 11px; color: #666; }
 
-        .btn-delete { background: #ff5252; margin-top: 10px; font-size: 13px; padding: 10px; }
-        .btn-done { background: var(--s); margin-top: 10px; }
-
-        .job-card {
-            background: white; border-right: 8px solid var(--p); padding: 20px;
-            margin-bottom: 20px; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        /* طبقة تكبير الصور (Modal) */
+        .img-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 99999;
+            align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
         }
-        .job-img { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 1px solid #ddd; object-fit: cover; max-height: 250px; }
-        
-        .time-tag { background: #f0f0f0; padding: 4px 10px; border-radius: 10px; font-size: 11px; color: #666; font-weight: bold; }
+        .img-modal.open { display: flex; opacity: 1; }
+        .modal-content { max-width: 90%; max-height: 90%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 20px; left: 20px; color: white; font-size: 30px; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div id="splash">
+    <img src="https://i.ibb.co/VpCkP9v7/1775975830101.png" alt="Aman Baytak Logo">
+    <h2 style="color: #00c853; margin-top: 20px; font-weight: 800;">أمان بيتك</h2>
+    <p style="color: #666;">نحمي هاتفك المكسور، ونعيده جديداً بباب بيتك.</p>
+</div>
+
+
+<div class="img-modal" id="imageModal" onclick="closeImageModal()">
+    <span class="modal-close">&times;</span>
+    <img class="modal-content" id="modalContent">
+</div>
 
 <nav>
     <button id="btn-customer" class="active" onclick="showPage('customer')">طلب صيانة</button>
@@ -88,68 +92,51 @@
 
 <div id="customer" class="page active">
     <div class="card">
-        <div class="rules-box">
-            <strong>🛡️ ضمان صيانة "أمان بيتك":</strong>
-            <ul style="margin: 5px 0; padding-right: 20px;">
-                <li>نصلك لباب البيت أينما كنت.</li>
-                <li>ضمان على القطع المستبدلة.</li>
-            </ul>
-        </div>
+        <h2 style="text-align:center; color:var(--s); margin-bottom:25px;">📱 اطلب صيانة الآن</h2>
+        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="zName" placeholder="اسمك الكامل"></div>
+        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="zPhone" placeholder="رقم الهاتف (مثال: 0770...)"></div>
+        <div class="input-group"><i class="fas fa-mobile-alt"></i><input type="text" id="zDevice" placeholder="نوع وموديل الجهاز"></div>
+        <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="zAddress" placeholder="عنوان السكن (المحافظة/الحي)"></div>
+        <div class="input-group"><i class="fas fa-tools"></i><textarea id="zDesc" rows="3" placeholder="اشرح لنا المشكلة في جهازك"></textarea></div>
+        <div class="input-group"><i class="fas fa-money-bill-wave"></i><input type="text" id="zPrice" placeholder="السعر المتفق عليه إن وجد"></div>
         
-        <h2 style="text-align:center; color:var(--s); margin:0;">📱 أمان بيتك</h2>
-        <p style="text-align:center; color:#888; margin-bottom:20px;">صيانة موبايلاتك بباب بيتك</p>
-        
-        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="zName" placeholder="اسم الزبون الكامل"></div>
-        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="zPhone" placeholder="رقم موبايل الزبون"></div>
-        <div class="input-group"><i class="fas fa-mobile-alt"></i><input type="text" id="zDevice" placeholder="موديل الجهاز"></div>
-        <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="zAddress" placeholder="عنوان الزبون"></div>
-        
-        <div class="upload-area" onclick="document.getElementById('zFile').click()">
-            <i class="fas fa-camera"></i> تصوير الجهاز
-            <input type="file" id="zFile" accept="image/*" style="display:none;" onchange="previewFile()">
+        <div class="upload-area" onclick="document.getElementById('zFile').click()" style="border:3px dashed var(--p); padding:30px; text-align:center; border-radius:25px; margin-bottom:20px; cursor:pointer; background: #f0fff4;">
+            <i class="fas fa-camera" style="font-size: 30px; color: var(--p);"></i><br><br>
+            <strong>اضغط لتصوير الجهاز المكسور</strong>
+            <input type="file" id="zFile" accept="image/*" capture="camera" style="display:none;" onchange="previewFile()">
             <img id="file-preview" style="width:100%; border-radius:15px; margin-top:15px; display:none;">
         </div>
 
-        <div class="input-group"><i class="fas fa-tools"></i><textarea id="zDesc" rows="3" placeholder="وصف العطل"></textarea></div>
-        <div class="input-group"><i class="fas fa-money-bill-wave"></i><input type="text" id="zPrice" placeholder="السعر المتفق عليه"></div>
-
-        <button class="btn" id="submitBtn" onclick="orderNow()">
-            <i class="fab fa-whatsapp"></i> إرسال الطلب
-        </button>
+        <button class="btn" id="submitBtn" onclick="orderNow()"><i class="fab fa-whatsapp"></i> إرسال الطلب للفنيين</button>
     </div>
 </div>
 
 <div id="technician" class="page">
     <div id="lock-screen" class="card" style="text-align:center;">
-        <i class="fas fa-toolbox" style="font-size:50px; color:var(--s); margin-bottom:15px;"></i>
-        <h3>لوحة الفنيين</h3>
-        <input type="password" id="techCode" placeholder="كود دخول الفني" style="text-align:center;">
-        <button class="btn" style="background:var(--s); margin-top:20px;" onclick="unlock()">فتح المهام</button>
+        <h3>دخول الفنيين</h3>
+        <input type="password" id="techCode" placeholder="كود الدخول">
+        <button class="btn" style="background:var(--s); margin-top:20px;" onclick="unlock()">فتح اللوحة</button>
+    </div>
+
+    <div id="tech-profile-setup" class="card" style="display:none;">
+        <h4>تسجيل بياناتك كفني</h4>
+        <div class="input-group"><i class="fas fa-user-gear"></i><input type="text" id="tName" placeholder="الاسم الكامل"></div>
+        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="tPhone" placeholder="رقم الموبايل"></div>
+        <button class="btn" onclick="saveTechProfile()">دخول</button>
     </div>
 
     <div id="jobs-dashboard" style="display:none;">
-        <div id="tech-agreement" class="card" style="border: 2px solid #ff5252; margin-bottom:20px;">
-            <h4 style="color:#d32f2f; margin-top:0;"><i class="fas fa-gavel"></i> تعهد وإخلاء مسؤولية</h4>
-            <div style="font-size: 13px; line-height: 1.6; color: #333; background: #fff5f5; padding: 15px; border-radius: 15px; text-align: justify;">
-                بصفتي فني صيانة مستخدم لهذا النظام، أتعهد بالآتي:
-                <br>• الحفاظ التام على <b>خصوصية بيانات الزبائن</b> وصورهم ومحتويات أجهزتهم.
-                <br>• تحمل كامل المسؤولية القانونية والفنية عن أي عطل إضافي أو ضرر يلحق بالجهاز أثناء الصيانة.
-                <br>• إدارة "أمان بيتك" غير مسؤولة عن أي اتفاق خارجي أو سوء تنفيذ، والمسؤولية تقع على عاتق الفني المنفذ للطلب حصراً.
-            </div>
-            <div style="margin-top: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor:pointer;">
-                    <input type="checkbox" id="agreeCheckbox"> <b style="color:var(--s)">أوافق على التعهد القانوني أعلاه</b>
-                </label>
-                <button id="startWorkBtn" class="btn" style="margin-top: 15px; background: var(--s);" disabled onclick="startTechWork()">استعراض الطلبات</button>
-            </div>
+        <div class="tech-tabs">
+            <button class="btn" id="tab-active" onclick="toggleArchive(false)">النشطة</button>
+            <button class="btn" id="tab-archive" style="background:var(--gray)" onclick="toggleArchive(true)">الأرشيف</button>
         </div>
-        <div id="actual-jobs" style="display:none;"><div id="jobs-list"></div></div>
+        <div id="jobs-list"></div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBtQaVNSMC2Pkq0HmS2rql0So-4zK-czC0",
@@ -164,149 +151,128 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const jobsPath = `aman_jobs`;
-    const audioAlert = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+    let showArchive = false;
 
-    function getTimeAgo(date) {
-        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-        if (seconds < 60) return "الآن";
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `منذ ${minutes} دقيقة`;
-        const hours = Math.floor(minutes / 60);
-        return `منذ ${hours} ساعة`;
+    // إخفاء الـ Splash
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const sp = document.getElementById('splash');
+            sp.style.opacity = '0';
+            setTimeout(() => sp.style.display = 'none', 800);
+        }, 3000); // زيادة الوقت قليلاً لثبات الرسالة
+    });
+
+    // ميزة تكبير الصور الجديدة
+    window.openImageModal = (src) => {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalContent');
+        if (document.getElementById('technician').classList.contains('active')) {
+            modal.classList.add('open');
+            modalImg.src = src;
+        }
     }
 
-    window.previewFile = function() {
-        const file = document.getElementById('zFile').files[0];
-        const preview = document.getElementById('file-preview');
-        const reader = new FileReader();
-        reader.onloadend = () => { preview.src = reader.result; preview.style.display = "block"; }
-        if (file) reader.readAsDataURL(file);
+    window.closeImageModal = () => {
+        const modal = document.getElementById('imageModal');
+        modal.classList.remove('open');
     }
 
-    window.showPage = function(p) {
-        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    function getWaLink(phone) {
+        let p = phone.trim();
+        if (p.startsWith('07')) p = '964' + p.substring(1);
+        else if (p.startsWith('7')) p = '964' + p;
+        return `https://wa.me/${p}`;
+    }
+
+    window.showPage = (p) => {
+        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
         document.getElementById(p).classList.add('active');
-        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('btn-' + p).classList.add('active');
-    }
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-'+p).classList.add('active');
+        closeImageModal();
+    };
 
-    window.orderNow = async function() {
-        const btn = document.getElementById('submitBtn');
-        const data = { 
-            name: document.getElementById('zName').value, 
-            phone: document.getElementById('zPhone').value,
-            device: document.getElementById('zDevice').value,
-            address: document.getElementById('zAddress').value,
-            desc: document.getElementById('zDesc').value,
-            price: document.getElementById('zPrice').value
-        };
-        const fileInput = document.getElementById('zFile');
-        if(!data.name || !data.phone || !fileInput.files[0]) return alert("أكمل البيانات والصورة");
-
-        btn.disabled = true;
-        try {
-            const formData = new FormData();
-            formData.append("image", fileInput.files[0]);
-            const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=6ccfe3473a01a90dffef5e509ac500dc`, { method: "POST", body: formData });
-            const imgData = await imgRes.json();
-            
-            const newJobRef = push(ref(db, jobsPath));
-            await set(newJobRef, { ...data, img: imgData.data.url, status: "متاح", createdAt: new Date().toISOString() });
-            alert("تم إرسال طلبك بنجاح!");
-            location.reload();
-        } catch (e) { alert("خطأ في الاتصال"); btn.disabled = false; }
-    }
-
-    window.unlock = function() {
+    window.unlock = () => {
         if(document.getElementById('techCode').value === "aman202300") {
             document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('jobs-dashboard').style.display = 'block';
-        } else alert("الكود خطأ");
-    }
+            const saved = localStorage.getItem('techInfo');
+            if(saved) { document.getElementById('jobs-dashboard').style.display='block'; loadJobs(); }
+            else document.getElementById('tech-profile-setup').style.display='block';
+        } else alert("خطأ!");
+    };
 
-    document.getElementById('agreeCheckbox').onchange = function() { document.getElementById('startWorkBtn').disabled = !this.checked; }
-    window.startTechWork = function() {
-        document.getElementById('tech-agreement').style.display = 'none';
-        document.getElementById('actual-jobs').style.display = 'block';
-        loadJobs();
-    }
+    window.saveTechProfile = () => {
+        const n = document.getElementById('tName').value;
+        const ph = document.getElementById('tPhone').value;
+        if(n && ph) {
+            localStorage.setItem('techInfo', JSON.stringify({name:n, phone:ph}));
+            document.getElementById('tech-profile-setup').style.display='none';
+            document.getElementById('jobs-dashboard').style.display='block';
+            loadJobs();
+        }
+    };
 
-    let isFirstLoad = true;
+    window.toggleArchive = (val) => { showArchive = val; loadJobs(); };
+
     function loadJobs() {
-        onValue(ref(db, jobsPath), (snapshot) => {
-            if (!isFirstLoad && snapshot.exists()) audioAlert.play().catch(e => console.log("Audio blocked"));
-            isFirstLoad = false;
-
+        onValue(ref(db, jobsPath), (snap) => {
             const list = document.getElementById('jobs-list');
             list.innerHTML = "";
-            const now = new Date();
-
-            snapshot.forEach((child) => {
-                const id = child.key;
+            snap.forEach((child) => {
                 const j = child.val();
-                
-                // حساب الوقت المنقضي بالساعات
-                const hoursPast = (now - new Date(j.createdAt)) / (1000 * 60 * 60);
+                const id = child.key;
+                const isArchived = (j.status === "مكتمل" || j.status === "مؤرشف");
+                if (showArchive !== isArchived) return;
 
-                // ✅ منطق العرض: يخفيه من المنصة إذا اكتمل أو مر يوم كامل على استلامه
-                if (j.status === "مكتمل") return;
-                if (j.status === "قيد التنفيذ" && hoursPast > 24) return;
-
-                const isAvail = j.status === "متاح";
                 list.innerHTML = `
-                    <div class="job-card" style="border-right-color: ${isAvail ? '#00c853' : '#ff9800'}">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span class="time-tag"><i class="far fa-clock"></i> ${getTimeAgo(j.createdAt)}</span>
-                            <small style="font-size:10px; color:#999;">ID: ${id.slice(-5)}</small>
+                    <div class="job-card" style="border-right-color: ${isArchived?'#666':(j.status==='متاح'?'#00c853':'#ff9800')}">
+                        ${j.img ? `<img src="${j.img}" class="job-img" onclick="openImageModal('${j.img}')">` : ''}
+                        <strong>${j.name}</strong><br><small>${j.address}</small>
+                        <p>📱 ${j.device}<br>🔧 ${j.desc}</p>
+                        <div style="display:flex; gap:10px;">
+                            ${j.status==='متاح'?`<button class="btn" onclick="takeJob('${id}','${j.phone}')">قبول</button>`:''}
+                            <a href="${getWaLink(j.phone)}" target="_blank" class="btn btn-wa"><i class="fab fa-whatsapp"></i> مراسلة</a>
                         </div>
-                        ${j.img ? `<img src="${j.img}" class="job-img">` : ''}
-                        <strong>👤 ${j.name}</strong><br>
-                        <small>📍 ${j.address}</small><br>
-                        <p style="background:#f5f5f5; padding:10px; border-radius:15px; font-size:14px;">🔧 <b>العطل:</b> ${j.desc}</p>
-                        <b style="color:var(--p);">💰 السعر: ${j.price}</b><br>
-
-                        ${!isAvail ? `<div style="background:#e3f2fd; padding:8px; border-radius:10px; margin:10px 0; font-size:12px;">👷 المسؤول: ${j.techName}</div>` : ''}
-
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                            <button class="btn" style="background:${isAvail ? 'var(--p)' : '#ccc'}" onclick="takeJob('${id}', '${j.phone}')" ${!isAvail ? 'disabled' : ''}>
-                                ${isAvail ? '✅ قبول' : 'قيد العمل'}
-                            </button>
-                            <a href="https://wa.me/${j.phone}" target="_blank" class="btn btn-wa">
-                                <i class="fab fa-whatsapp" style="font-size:20px;"></i> <span>مراسلة</span>
-                            </a>
-                        </div>
-
-                        ${!isAvail ? `<button class="btn btn-done" onclick="finishJob('${id}')">✨ تم الإنجاز</button>` : ''}
-                        <button class="btn btn-delete" onclick="deleteJob('${id}')"><i class="fas fa-trash"></i> حذف</button>
+                        ${j.status==='قيد التنفيذ'?`<button class="btn" style="margin-top:10px; background:#1a237e" onclick="doneJob('${id}')">تم الإنجاز</button>`:''}
+                        ${!isArchived ? `<button class="btn" style="margin-top:10px; background:#ff5252" onclick="doneJob('${id}','مؤرشف')">أرشفة</button>`:''}
                     </div>` + list.innerHTML;
             });
         });
     }
 
-    window.takeJob = async function(id, phone) {
-        const name = prompt("ادخل اسمك كفني:");
-        if(name) {
-            await update(ref(db, `${jobsPath}/${id}`), { 
-                status: "قيد التنفيذ", 
-                techName: name, 
-                techCode: document.getElementById('techCode').value,
-                pickedUpAt: new Date().toISOString() 
-            });
-            window.open(`https://wa.me/${phone}?text=مرحباً، أنا الفني ${name} من أمان بيتك.. استلمت طلبك وجاري المباشرة.`, '_blank');
-        }
+    window.takeJob = async (id, ph) => {
+        const t = JSON.parse(localStorage.getItem('techInfo'));
+        await update(ref(db, `${jobsPath}/${id}`), { status: "قيد التنفيذ", techName: t.name });
+        window.open(getWaLink(ph)+`?text=مرحباً، أنا الفني ${t.name} من أمان بيتك.. استلمت طلبك.`, '_blank');
     }
 
-    // ✅ تحديث: الحالة تصبح "مكتمل" ليبقى في فايربيس للأبد ويختفي من المنصة
-    window.finishJob = async function(id) { 
-        if(confirm("نقل الطلب للأرشيف الدائم (سيبقى في فايربيس)؟")) {
-            await update(ref(db, `${jobsPath}/${id}`), { 
-                status: "مكتمل",
-                completedAt: new Date().toISOString()
-            });
-        }
+    window.doneJob = async (id, stat="مكتمل") => {
+        if(confirm("تأكيد نقل الطلب للأرشيف؟")) await update(ref(db, `${jobsPath}/${id}`), { status: stat });
     }
 
-    window.deleteJob = async function(id) { if(confirm("حذف الطلب نهائياً من كل مكان؟")) await remove(ref(db, `${jobsPath}/${id}`)); }
+    window.previewFile = () => {
+        const file = document.getElementById('zFile').files[0];
+        const preview = document.getElementById('file-preview');
+        const reader = new FileReader();
+        reader.onloadend = () => { preview.src = reader.result; preview.style.display = "block"; };
+        if (file) reader.readAsDataURL(file);
+    };
+
+    window.orderNow = async () => {
+        const btn = document.getElementById('submitBtn');
+        const data = { name: document.getElementById('zName').value, phone: document.getElementById('zPhone').value, device: document.getElementById('zDevice').value, address: document.getElementById('zAddress').value, desc: document.getElementById('zDesc').value, price: document.getElementById('zPrice').value };
+        const f = document.getElementById('zFile').files[0];
+        if(!data.name || !data.phone || !f) return alert("أكمل البيانات");
+        btn.disabled = true; btn.innerText = "جاري الإرسال...";
+        try {
+            const fd = new FormData(); fd.append("image", f);
+            const res = await fetch("https://api.imgbb.com/1/upload?key=6ccfe3473a01a90dffef5e509ac500dc", { method:"POST", body:fd });
+            const img = await res.json();
+            await set(push(ref(db, jobsPath)), { ...data, img: img.data.url, status: "متاح", createdAt: new Date().toISOString() });
+            alert("تم إرسال طلبك!"); location.reload();
+        } catch(e) { alert("خطأ بالاتصال"); btn.disabled = false; }
+    };
 </script>
 </body>
-</html>
+                                     </html>
+    
