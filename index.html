@@ -7,64 +7,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --p: #00c853; --s: #1a237e; --wa: #25D366; --danger: #ff5252; --accent: #ffd600; }
+        :root { --p: #00c853; --s: #1a237e; --wa: #25D366; --danger: #ff5252; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); background-attachment: fixed; min-height: 100vh; color: #333; }
+        body { font-family: 'Tajawal', sans-serif; margin: 0; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); background-attachment: fixed; min-height: 100vh; }
         
-        #splash { position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #splash img { width: 280px; border-radius: 20px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+        #splash { position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        #splash img { width: 220px; }
 
-        .torn-banner { width: 100%; max-width: 500px; margin: 10px auto; display: block; border-radius: 15px; }
+        nav { background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); padding: 15px; display: flex; justify-content: center; gap: 15px; position: sticky; top:0; z-index: 1000; }
+        nav button { flex: 1; max-width: 150px; padding: 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-weight: 900; cursor: pointer; }
+        nav button.active { background: var(--p); border: none; }
 
-        nav { background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); padding: 15px; display: flex; justify-content: center; gap: 15px; position: sticky; top:0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        nav button { flex: 1; max-width: 150px; padding: 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        nav button.active { background: var(--p); border: none; box-shadow: 0 4px 15px rgba(0,200,83,0.4); }
-
-        .page { display: none; padding: 20px; width: 100%; max-width: 600px; margin: 0 auto; animation: slideUp 0.5s ease; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        .card { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 35px; box-shadow: 0 20px 45px rgba(0,0,0,0.3); margin-bottom: 25px; border: 1px solid white; }
-        h2 { text-align: center; color: var(--s); font-weight: 900; margin-top: 0; font-size: 24px; }
-
+        .card { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 35px; box-shadow: 0 20px 45px rgba(0,0,0,0.3); margin-bottom: 25px; position: relative; }
+        
         .input-group { margin-bottom: 18px; position: relative; }
-        .input-group i { position: absolute; right: 18px; top: 18px; color: var(--p); font-size: 18px; }
-        input, textarea { width: 100%; padding: 16px 50px 16px 20px; border: 2px solid #e0e0e0; border-radius: 20px; font-family: 'Tajawal'; font-size: 16px; outline: none; transition: 0.3s; background: #fdfdfd; }
-        input:focus { border-color: var(--p); background: white; box-shadow: 0 0 10px rgba(0,200,83,0.1); }
+        .input-group i { position: absolute; right: 18px; top: 18px; color: var(--p); }
+        input, textarea { width: 100%; padding: 16px 50px 16px 20px; border: 2px solid #e0e0e0; border-radius: 20px; font-family: 'Tajawal'; font-size: 16px; outline: none; }
 
-        .btn { background: var(--p); color: white; border: none; width: 100%; padding: 18px; border-radius: 22px; font-size: 18px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
-        .btn:active { transform: scale(0.96); }
-        .btn-wa { background: var(--wa); font-size: 14px; padding: 12px; }
-        .btn-status { background: var(--s); font-size: 13px; padding: 10px; margin-top: 5px; }
+        .btn { background: var(--p); color: white; border: none; width: 100%; padding: 18px; border-radius: 22px; font-size: 18px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .btn-danger { background: var(--danger); font-size: 14px; margin-top: 10px; }
 
-        .upload-area { border: 3px dashed var(--p); padding: 30px; text-align: center; border-radius: 25px; margin-bottom: 20px; background: #f1f8e9; cursor: pointer; transition: 0.3s; }
-        #file-preview { width: 100%; border-radius: 20px; margin-top: 15px; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: zoom-in; }
-
-        .job-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border-right: 8px solid var(--p); position: relative; overflow: hidden; }
-        .status-badge { position: absolute; top: 15px; left: 15px; padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; }
+        .job-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border-right: 8px solid var(--p); position: relative; }
+        .job-img { width: 100%; border-radius: 20px; margin-bottom: 15px; max-height: 250px; object-fit: cover; }
         
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
-        .modal-content { background: white; padding: 30px; border-radius: 35px; text-align: center; max-width: 400px; width: 100%; }
-
-        footer { text-align: center; color: white; padding: 25px; font-size: 13px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .logout-btn { background: #f5f5f5; color: #333; border: 1px solid #ddd; padding: 8px 15px; border-radius: 12px; font-size: 12px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; }
+        
+        .footer-rights { text-align: center; color: white; padding: 20px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="splash">
     <img src="https://i.ibb.co/v4Rv89wf/1776003967024.png" alt="Logo">
-    <h2 style="margin-top:20px; color: var(--p);">أمان بيتك</h2>
-    <p>صيانة الموبايل.. بباب بيتك</p>
-</div>
-
-<div class="modal" id="myModal">
-    <div class="modal-content">
-        <div id="modalIcon" style="font-size: 50px; margin-bottom: 15px;"></div>
-        <h3 id="modalTitle"></h3>
-        <p id="modalBody"></p>
-        <button class="btn" onclick="closeModal()">موافق</button>
-    </div>
+    <h1 style="color: var(--p)">أهلاً وسهلاً بك</h1>
+    <p>في منصة أمان بيتك للصيانة</p>
 </div>
 
 <nav>
@@ -73,22 +52,21 @@
 </nav>
 
 <div id="customer" class="page active">
-    <img src="https://i.ibb.co/v4Rv89wf/1776003967024.png" class="torn-banner" alt="Banner">
     <div class="card">
-        <h2>📱 اطلب فني الآن</h2>
+        <h2 style="text-align: center;">📱 اطلب فني الآن</h2>
         <div class="input-group"><i class="fas fa-user"></i><input type="text" id="zName" placeholder="الاسم الكامل"></div>
-        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="zPhone" placeholder="رقم الهاتف (مثل 0770...)"></div>
-        <div class="input-group"><i class="fas fa-mobile-alt"></i><input type="text" id="zDevice" placeholder="نوع وموديل الجهاز"></div>
-        <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="zAddress" placeholder="عنوان السكن (المحافظة/المنطقة)"></div>
-        <div class="input-group"><i class="fas fa-tools"></i><textarea id="zDesc" rows="2" placeholder="اشرح لنا المشكلة في جهازك"></textarea></div>
+        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="zPhone" placeholder="رقم الهاتف"></div>
+        <div class="input-group"><i class="fas fa-mobile-alt"></i><input type="text" id="zDevice" placeholder="موديل الجهاز"></div>
+        <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="zAddress" placeholder="العنوان بالتفصيل"></div>
+        <div class="input-group"><i class="fas fa-tools"></i><textarea id="zDesc" rows="2" placeholder="شرح العطل"></textarea></div>
         
-        <div class="upload-area" onclick="document.getElementById('zFile').click()">
-            <i class="fas fa-camera" style="font-size: 40px; color: var(--p);"></i><br><br>
-            <strong>اضغط لتصوير الجهاز الآن</strong>
-            <input type="file" id="zFile" accept="image/*" capture="camera" style="display:none;" onchange="previewFile(this)">
-            <img id="file-preview" onclick="event.stopPropagation(); window.open(this.src)">
+        <div class="btn" style="background:#f0f0f0; color:#333; margin-bottom:15px;" onclick="document.getElementById('zFile').click()">
+            <i class="fas fa-camera"></i> تصوير الجهاز (مطلوب)
         </div>
-        <button class="btn" id="submitBtn" onclick="orderNow()">إرسال الطلب للفنيين</button>
+        <input type="file" id="zFile" accept="image/*" capture="camera" style="display:none;" onchange="previewFile(this)">
+        <img id="file-preview" style="width: 100%; border-radius: 20px; margin-bottom: 15px; display: none;">
+        
+        <button class="btn" id="submitBtn" onclick="orderNow()">إرسال الطلب</button>
     </div>
 </div>
 
@@ -96,61 +74,52 @@
     <div id="tech-auth">
         <div class="card" style="text-align:center;">
             <h3>🔑 دخول الفنيين</h3>
-            <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="techCode" placeholder="كود الدخول الخاص"></div>
-            <button class="btn btn-s" onclick="checkTechAuth()">تحقق والدخول</button>
+            <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="techCode" placeholder="كود الدخول"></div>
+            <button class="btn" onclick="checkTechAuth()">دخول</button>
         </div>
     </div>
 
     <div id="tech-reg" style="display:none;">
         <div class="card">
-            <h3>📝 سجل بياناتك كفني</h3>
-            <div class="input-group"><i class="fas fa-id-badge"></i><input type="text" id="tName" placeholder="اسمك الثلاثي"></div>
-            <div class="input-group"><i class="fas fa-map-pin"></i><input type="text" id="tAddr" placeholder="عنوان المحل أو السكن"></div>
-            <div class="input-group"><i class="fas fa-phone-alt"></i><input type="tel" id="tPhone" placeholder="رقم الموبايل الفعال"></div>
-            <button class="btn" onclick="saveTechProfile()">حفظ والبدء بالعمل</button>
+            <h3>📝 سجل بياناتك</h3>
+            <p id="manager-note" style="display:none; font-size:12px; color:red; text-align:center;">مدير: سجل باسم "المدير" لتفعيل صلاحية الحذف.</p>
+            <div class="input-group"><i class="fas fa-id-badge"></i><input type="text" id="tName" placeholder="الاسم الكامل" oninput="toggleNote(this.value)"></div>
+            <div class="input-group"><i class="fas fa-phone-alt"></i><input type="tel" id="tPhone" placeholder="رقم الهاتف"></div>
+            <label style="display:block; margin-bottom:15px; font-size:12px;"><input type="checkbox" id="agreeCheck"> أوافق على كافة الشروط</label>
+            <button class="btn" onclick="saveTechProfile()">حفظ والبدء</button>
         </div>
     </div>
 
     <div id="tech-main" style="display:none;">
+        <button class="logout-btn" onclick="logoutTech()"><i class="fas fa-sign-out-alt"></i> خروج وتغيير الفني</button>
         <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <button class="btn" style="flex:1" onclick="loadJobs('active')">الطلبات النشطة</button>
-            <button class="btn btn-s" style="flex:1; background:#607d8b" onclick="loadJobs('archive')">الأرشيف</button>
+            <button class="btn" style="flex:1" onclick="loadJobs('active')">النشطة</button>
+            <button class="btn" style="flex:1; background:#607d8b" onclick="loadJobs('archive')">الأرشيف</button>
         </div>
         <div id="jobs-list"></div>
     </div>
 </div>
 
-<footer>© 2026 جميع الحقوق محفوظة لـ مشروع أمان بيتك</footer>
+<div class="footer-rights">محفوظة 2026 أمان بيتك</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBtQaVNSMC2Pkq0HmS2rql0So-4zK-czC0",
-        authDomain: "aman-baytak-app.firebaseapp.com",
-        projectId: "aman-baytak-app",
         databaseURL: "https://aman-baytak-app-default-rtdb.asia-southeast1.firebasedatabase.app",
-        storageBucket: "aman-baytak-app.firebasestorage.app",
-        messagingSenderId: "986750911757",
-        appId: "1:986750911757:web:2b1693053e5641ca6b5c44"
+        projectId: "aman-baytak-app",
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.onload = () => {
-        setTimeout(() => { document.getElementById('splash').style.display='none'; }, 2500);
-        showModal("👋 أهلاً بك", "منصة أمان بيتك ترحب بك.. صيانة موبايلك في منزلك بكل أمان", "✅");
-    };
+    window.onload = () => { setTimeout(() => { document.getElementById('splash').style.display='none'; }, 2500); };
 
-    window.showModal = (title, body, icon) => {
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalBody').innerText = body;
-        document.getElementById('modalIcon').innerText = icon;
-        document.getElementById('myModal').style.display = 'flex';
+    window.toggleNote = (val) => {
+        document.getElementById('manager-note').style.display = (val === "المدير") ? "block" : "none";
     };
-    window.closeModal = () => document.getElementById('myModal').style.display = 'none';
 
     window.showPage = (p) => {
         document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
@@ -163,10 +132,7 @@
         const file = input.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => { 
-                const img = document.getElementById('file-preview');
-                img.src = e.target.result; img.style.display = 'block';
-            };
+            reader.onload = (e) => { document.getElementById('file-preview').src = e.target.result; document.getElementById('file-preview').style.display = 'block'; };
             reader.readAsDataURL(file);
         }
     };
@@ -177,19 +143,24 @@
             const info = localStorage.getItem('techData');
             if(info) { document.getElementById('tech-main').style.display='block'; loadJobs('active'); }
             else { document.getElementById('tech-reg').style.display='block'; }
-        } else { showModal("خطأ", "كود الدخول غير صحيح", "❌"); }
+        } else { alert("الكود خطأ!"); }
     };
 
     window.saveTechProfile = () => {
         const n = document.getElementById('tName').value;
         const p = document.getElementById('tPhone').value;
-        const a = document.getElementById('tAddr').value;
-        if(n && p && a) {
-            localStorage.setItem('techData', JSON.stringify({name:n, phone:p, addr:a}));
-            document.getElementById('tech-reg').style.display='none';
-            document.getElementById('tech-main').style.display='block';
-            loadJobs('active');
-        } else { showModal("تنبيه", "يرجى ملء جميع البيانات", "⚠️"); }
+        if(!document.getElementById('agreeCheck').checked) return alert("يرجى الموافقة");
+        if(n && p) {
+            localStorage.setItem('techData', JSON.stringify({name:n, phone:p}));
+            location.reload();
+        }
+    };
+
+    window.logoutTech = () => {
+        if(confirm("هل تريد تسجيل الخروج والرجوع لصفحة الاتفاقية والاسم؟")) {
+            localStorage.clear();
+            location.reload();
+        }
     };
 
     window.orderNow = async () => {
@@ -202,27 +173,25 @@
             addr: document.getElementById('zAddress').value,
             desc: document.getElementById('zDesc').value,
             status: "متاح",
-            time: new Date().toLocaleTimeString('ar-EG'),
-            date: new Date().toLocaleDateString('ar-EG')
+            time: new Date().toLocaleString('ar-EG')
         };
-
-        if(!data.name || !data.phone || !file) return showModal("نقص بيانات", "يرجى ملء الاسم ورقم الهاتف وتصوير الجهاز", "⚠️");
-
-        btn.disabled = true; btn.innerText = "جاري الرفع...";
-
+        if(!data.name || !data.phone || !file) return alert("أكمل البيانات");
+        btn.disabled = true;
         try {
             const fd = new FormData(); fd.append("image", file);
             const res = await fetch("https://api.imgbb.com/1/upload?key=6ccfe3473a01a90dffef5e509ac500dc", { method:"POST", body:fd });
             const imgRes = await res.json();
             data.img = imgRes.data.url;
-
             await set(push(ref(db, 'aman_jobs')), data);
-            showModal("تم الإرسال", "تم توجيه طلبك للفنيين بنجاح.. انتظر اتصالنا", "✅");
-            setTimeout(() => location.reload(), 3000);
-        } catch(e) { showModal("فشل", "حدث خطأ في الاتصال", "❌"); btn.disabled = false; }
+            alert("تم الإرسال");
+            location.reload();
+        } catch(e) { alert("خطأ"); btn.disabled = false; }
     };
 
     window.loadJobs = (mode) => {
+        const techInfo = JSON.parse(localStorage.getItem('techData') || '{}');
+        const isManager = techInfo.name === "المدير";
+
         onValue(ref(db, 'aman_jobs'), (snap) => {
             const list = document.getElementById('jobs-list');
             list.innerHTML = "";
@@ -233,46 +202,39 @@
 
                 const card = document.createElement('div');
                 card.className = 'job-card';
-                card.style.borderColor = j.status === 'متاح' ? '#00c853' : (j.status === 'مستلم' ? '#ffd600' : '#1a237e');
-                
                 card.innerHTML = `
-                    <div class="status-badge" style="background:${j.status==='متاح'?'#00c853':(j.status==='مستلم'?'#ffd600':'#1a237e')}">${j.status}</div>
-                    <img src="${j.img}" style="width:100%; border-radius:15px; margin-bottom:10px; cursor:pointer" onclick="window.open(this.src)">
+                    <div style="font-size:12px; color:var(--p); font-weight:bold">${j.status}</div>
+                    ${j.img ? `<img src="${j.img}" class="job-img">` : ''}
                     <strong>👤 ${j.name}</strong><br>
-                    <small>📍 ${j.addr}</small><br>
-                    <p>📱 ${j.device}<br>📝 ${j.desc}</p>
-                    <small>🕒 ${j.time} - ${j.date}</small><hr>
-                    ${j.status === 'متاح' ? `<button class="btn btn-wa" onclick="takeJob('${id}','${j.phone}')"><i class="fab fa-whatsapp"></i> قبول الطلب والتواصل</button>` : ''}
-                    ${j.status === 'مستلم' ? `<button class="btn btn-status" onclick="updateStatus('${id}','منجز')">تحديد كمنجز ✅</button>` : ''}
-                    ${j.status === 'منجز' ? `<button class="btn btn-status" style="background:#607d8b" onclick="updateStatus('${id}','أرشفة')">نقل للأرشيف 📁</button>` : ''}
+                    <small>📍 ${j.addr}</small>
+                    <p>📱 ${j.device} | 📝 ${j.desc}</p>
+                    ${j.status === 'متاح' ? `<button class="btn" style="background:var(--wa); font-size:14px;" onclick="takeJob('${id}','${j.phone}')">قبول الطلب</button>` : ''}
+                    ${j.status === 'مستلم' ? `<button class="btn" style="background:var(--s); font-size:14px;" onclick="updateStatus('${id}','أرشفة')">نقل للأرشيف</button>` : ''}
+                    ${isManager ? `<button class="btn btn-danger" onclick="deleteJob('${id}')"><i class="fas fa-trash"></i> حذف من الأرشيف نهائياً</button>` : ''}
                 `;
                 list.prepend(card);
             });
         });
     };
 
-    window.takeJob = (id, clientPhone) => {
-        const tech = JSON.parse(localStorage.getItem('techData'));
-        const msg = `أهلاً بك.. أنا الفني (${tech.name}) من منصة أمان بيتك لصيانة الموبايل المنزلية. لقد استلمت طلبك من المنصة بخصوص صيانة جهازك، متى يناسبك الحضور؟`;
-        
-        // تنظيف الرقم ومعالجته ليدعم 964+
-        let formattedPhone = clientPhone.trim().replace(/\s+/g, '');
-        if (formattedPhone.startsWith('0')) {
-            formattedPhone = '964' + formattedPhone.substring(1);
-        } else if (formattedPhone.startsWith('7')) {
-            formattedPhone = '964' + formattedPhone;
-        } else if (formattedPhone.startsWith('+')) {
-            formattedPhone = formattedPhone.substring(1);
-        }
+    window.takeJob = (id, phone) => {
+        let cleanPhone = phone.replace(/\D/g, '');
+        if(cleanPhone.startsWith('0')) cleanPhone = '964' + cleanPhone.substring(1);
+        else if(!cleanPhone.startsWith('964')) cleanPhone = '964' + cleanPhone;
 
-        update(ref(db, `aman_jobs/${id}`), { status: "مستلم", techName: tech.name });
-        window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`);
+        const msg = encodeURIComponent("تم قبول طلبك من منصة أمان بيتك، شنو مشكلتك؟");
+        update(ref(db, `aman_jobs/${id}`), { status: "مستلم" });
+        window.open(`https://wa.me/${cleanPhone}?text=${msg}`);
     };
 
-    window.updateStatus = (id, newStatus) => {
-        update(ref(db, `aman_jobs/${id}`), { status: newStatus });
+    window.updateStatus = (id, newStatus) => { update(ref(db, `aman_jobs/${id}`), { status: newStatus }); };
+
+    window.deleteJob = (id) => {
+        if(confirm("هل أنت متأكد من الحذف النهائي؟")) {
+            remove(ref(db, `aman_jobs/${id}`));
+        }
     };
 </script>
 </body>
-                </html>
-                                         
+    </html>
+    
