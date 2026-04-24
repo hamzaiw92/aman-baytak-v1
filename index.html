@@ -80,13 +80,16 @@
 </nav>
 
 <div id="customer" class="page active">
-    <div style="text-align:center; margin-bottom:10px;">
+    <div style="text-align:center; margin-bottom:15px; overflow: hidden; min-height: 50px;">
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-client="ca-pub-3978081560356599"
              data-ad-slot="auto"
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
 
     <div class="card">
@@ -126,17 +129,16 @@
 
     <div id="tech-dashboard" style="display: none;">
         <div id="admin-add-worker" style="display:none;">
-            <div class="section-label">➕ إضافة فني جديد للنظام (صلاحية مدير)</div>
+            <div class="section-label">➕ إضافة فني جديد للنظام</div>
             <div class="card" style="margin-bottom:20px;">
                 <input type="text" id="w-name" placeholder="اسم الفني الكامل" style="margin-bottom:10px;">
-                <input type="text" id="w-job" placeholder="الاختصاص (مثلاً: هاردوير)" style="margin-bottom:10px;">
+                <input type="text" id="w-job" placeholder="الاختصاص" style="margin-bottom:10px;">
                 <input type="tel" id="w-phone" placeholder="رقم الهاتف" style="margin-bottom:10px;">
-                <input type="text" id="w-img" placeholder="رابط الصورة المباشر" style="margin-bottom:10px;">
-                <input type="text" id="w-fb" placeholder="رابط صفحة الفيسبوك" style="margin-bottom:10px;">
-                <button class="btn-main" onclick="addNewWorker()">حفظ الفني في القائمة</button>
+                <input type="text" id="w-img" placeholder="رابط الصورة" style="margin-bottom:10px;">
+                <input type="text" id="w-fb" placeholder="رابط الفيسبوك" style="margin-bottom:10px;">
+                <button class="btn-main" onclick="addNewWorker()">حفظ الفني</button>
             </div>
         </div>
-
         <div class="section-label">📌 طلبات الصيانة الجديدة</div>
         <div id="new-orders"></div>
         <div class="section-label">✅ طلبات تمت الموافقة عليها</div>
@@ -168,7 +170,6 @@
     let currentUserRole = localStorage.getItem('tech_role') || "";
 
     window.onload = () => {
-        (adsbygoogle = window.adsbygoogle || []).push({});
         setTimeout(() => {
             document.getElementById('splash').style.display = 'none';
             if(localStorage.getItem('user_login')) {
@@ -193,7 +194,6 @@
         document.getElementById('main-nav').style.display = 'flex';
         document.getElementById('logout-trigger').style.display = 'flex';
         document.getElementById('cust-name').value = name;
-        
         if(currentUserRole) {
             document.getElementById('tech-login-box').style.display = 'none';
             document.getElementById('tech-dashboard').style.display = 'block';
@@ -213,7 +213,6 @@
     };
 
     window.addNewWorker = async () => {
-        if(currentUserRole !== 'admin') return alert("ليس لديك صلاحية");
         const wData = {
             name: document.getElementById('w-name').value,
             job: document.getElementById('w-job').value,
@@ -221,9 +220,8 @@
             img: document.getElementById('w-img').value || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
             fb: document.getElementById('w-fb').value || "#"
         };
-        if(!wData.name || !wData.phone) return alert("الاسم والرقم مطلوبين");
         await push(ref(db, 'workers'), wData);
-        alert("تم إضافة الفني بنجاح");
+        alert("تم الإضافة");
         location.reload();
     };
 
@@ -242,16 +240,14 @@
                         <div class="tech-actions">
                             <button class="action-btn btn-call" onclick="window.open('tel:${w.phone}')"><i class="fas fa-phone"></i> اتصال</button>
                             <button class="action-btn btn-fb" onclick="window.open('${w.fb}')"><i class="fab fa-facebook"></i> فيسبوك</button>
-                            ${currentUserRole === 'admin' ? `<button class="action-btn" style="background:#ff5252; color:#fff" onclick="deleteWorker('${id}')">حذف الفني</button>` : ''}
+                            ${currentUserRole === 'admin' ? `<button class="action-btn" style="background:red; color:#fff" onclick="deleteWorker('${id}')">حذف</button>` : ''}
                         </div>
                     </div>`;
             });
         });
     }
 
-    window.deleteWorker = (id) => { 
-        if(currentUserRole === 'admin') { if(confirm("حذف الفني؟")) remove(ref(db, 'workers/'+id)); }
-    };
+    window.deleteWorker = (id) => { if(confirm("حذف؟")) remove(ref(db, 'workers/'+id)); };
 
     window.submitOrder = async () => {
         const data = {
@@ -266,7 +262,7 @@
         };
         if(!data.phone || !data.address) return alert("أكمل البيانات");
         await push(ref(db, 'orders'), data);
-        alert("تم الإرسال بنجاح");
+        alert("تم الإرسال");
         location.reload();
     };
 
@@ -283,7 +279,7 @@
                     📍 ${o.address} | 📱 ${o.device}<br>
                     <button class="btn-main" style="padding:5px; font-size:12px; width:auto; background:#1877F2;" onclick="window.open('https://wa.me/964${o.phone.substring(1)}')">واتساب</button>
                     ${o.status === 'new' ? `<button class="btn-main" style="padding:5px; font-size:12px; width:auto;" onclick="updateStatus('${id}')">تمت الصيانة</button>` : ''}
-                    ${currentUserRole === 'admin' ? `<button class="btn-main" style="padding:5px; font-size:12px; width:auto; background:red" onclick="deleteOrder('${id}')">حذف الطلب</button>` : ''}
+                    ${currentUserRole === 'admin' ? `<button class="btn-main" style="padding:5px; font-size:12px; width:auto; background:red" onclick="deleteOrder('${id}')">حذف</button>` : ''}
                 </div>`;
                 if(o.status === 'new') newDiv.innerHTML += card;
                 else arcDiv.innerHTML += card;
@@ -292,7 +288,7 @@
     }
 
     window.updateStatus = (id) => update(ref(db, 'orders/'+id), {status: 'archived'});
-    window.deleteOrder = (id) => { if(confirm("حذف الطلب؟")) remove(ref(db, 'orders/'+id)); };
+    window.deleteOrder = (id) => { if(confirm("حذف؟")) remove(ref(db, 'orders/'+id)); };
     window.showTab = (t) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(t).classList.add('active');
